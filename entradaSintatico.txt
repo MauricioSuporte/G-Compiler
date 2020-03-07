@@ -1,0 +1,1 @@
+var id , id : integer ; id : real ; if id + id then id := id
