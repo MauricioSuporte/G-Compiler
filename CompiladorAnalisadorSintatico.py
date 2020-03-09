@@ -19,7 +19,7 @@ def I(ch, pos):
         print("Erro, esperado var e encontrado %s no %dº token" %(ch, pos+1))
 
 def D(ch, pos):
-    if ch == "id":
+    if isIdent(ch):
         ch, pos = L(ch, pos)
         if ch == ":":
             ch, pos = proxsimb(ch, pos)
@@ -31,15 +31,15 @@ def D(ch, pos):
     elif ch == "if":
         return (ch, pos)
     else:
-        print("Erro, esperado id ou if e encontrado %s no %dº token" % (ch, pos + 1))
+        print("Erro, esperado identificador ou if e encontrado %s no %dº token" % (ch, pos + 1))
 
 def L(ch, pos):
-    if ch == "id":
+    if isIdent(ch):
         ch, pos = proxsimb(ch, pos)
         ch, pos = X(ch, pos)
         return(ch, pos)
     else:
-        print("Erro, esperado id e encontrado %s no %dº token" %(ch, pos+1))
+        print("Erro, esperado identificador e encontrado %s no %dº token" %(ch, pos+1))
 
 def X(ch, pos):
     if ch == ",":
@@ -66,11 +66,15 @@ def O(ch, pos):
         ch, pos = proxsimb(ch, pos)
         ch, pos = D(ch, pos)
         return (ch, pos)
+    elif ch == "id":
+        return (ch, pos)
+    elif ch == "if":
+        return (ch, pos)
     else:
-        print("Erro, esperado id e econtrado %s no %dº token" %(ch, pos+1))
+        print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
 
 def S(ch, pos):
-    if ch == "id":
+    if isIdent(ch):
         ch, pos = proxsimb(ch, pos)
         if ch == ":=":
             ch, pos = proxsimb(ch, pos)
@@ -88,15 +92,15 @@ def S(ch, pos):
         else:
             print("Erro, esperado then e econtrado %s no %dº token" %(ch, pos+1))
     else:
-        print("Erro, esperado id e econtrado %s no %dº token" %(ch, pos+1))
+        print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
 
 def E(ch, pos):
-    if ch == "id":
+    if isIdent(ch):
         ch, pos = T(ch, pos)
         ch, pos = R(ch, pos)
         return (ch, pos)
     else:
-        print("Erro, esperado id e econtrado %s no %dº token" %(ch, pos+1))
+        print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
 
 def R(ch, pos):
     if ch == "+":
@@ -113,11 +117,11 @@ def R(ch, pos):
 
 
 def T(ch, pos):
-    if ch == "id":
+    if isIdent(ch):
         ch, pos = proxsimb(ch, pos)
         return (ch, pos)
     else:
-        print("Erro, esperado id e econtrado %s no %dº token" %(ch, pos+1))
+        print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
 
 
 def proxsimb(ch, pos):
@@ -125,6 +129,15 @@ def proxsimb(ch, pos):
         return (tokens[pos + 1], pos + 1)
     else:
         return ("#", pos)
+
+def isIdent(ch):
+    if ch == "var" or ch == "integer" or ch == "real" or ch == "if" or ch == "then":
+        resultado = False
+    elif (ch[0] >= "a" and ch[0] <= "z") or (ch[0] >= "A" and ch[0] <= "Z"):
+        resultado = True
+    else:
+        resultado = False
+    return resultado
 
 
 #Main

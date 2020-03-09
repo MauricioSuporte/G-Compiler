@@ -10,18 +10,9 @@ for linha in arquivo:
         if linha[i] == ":" and linha[i+1] == "=":
             tokens.append(" :=")
             i = i + 2
-        elif linha[i] == "Z" or linha[i] == "I" or linha[i] == "D" or linha[i] == "L" \
-                or linha[i] == "X" or linha[i] == "K" or linha[i] == "O" or linha[i] == "S" \
-                or linha[i] == "E" or linha[i] == "R" or linha[i] == "T" or linha[i] == "," \
-                or linha[i] == ";" or linha[i] == "+" or linha[i] == ":":
-            tokens.append(" " + linha[i])
-            i = i + 1
         elif linha[i] == "v" and linha[i+1] == "a" and linha[i+2] == "r":
             tokens.append(" var")
             i = i + 3
-        elif linha[i] == "i" and linha[i+1] == "d":
-            tokens.append(" id")
-            i = i + 2
         elif linha[i] == "i" and linha[i+1] == "n" and linha[i+2] == "t" and linha[i+3] == "e" \
                 and linha[i+4] == "g" and linha[i+5] == "e" and linha[i+6] == "r":
             tokens.append(" integer")
@@ -29,6 +20,21 @@ for linha in arquivo:
         elif linha[i] == "r" and linha[i+1] == "e" and linha[i+2] == "a" and linha[i+3] == "l":
             tokens.append(" real")
             i = i + 4
+        elif linha[i] == "," or linha[i] == ";" or linha[i] == "+" or linha[i] == ":":
+            tokens.append(" " + linha[i])
+            i = i + 1
+        elif ((linha[i] >= "a" and linha[i] <= "z") or (linha[i] >= "A" and linha[i] <= "Z")):
+            j = i + 1
+            temp = linha[i]
+            while (j < tam):
+                if ((linha[j] >= "a" and linha[j] <= "z") or (linha[j] >= "A" and linha[j] <= "Z")
+                        or (linha[j] >= "1" and linha[j] <= "9")):
+                    temp = temp + linha[j]
+                    j = j + 1
+                else:
+                    break
+            tokens.append(" " + temp)
+            i = j
         elif linha[i] == "i" and linha[i+1] == "f":
             tokens.append(" if")
             i = i + 2
