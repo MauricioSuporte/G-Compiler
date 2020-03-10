@@ -5,6 +5,7 @@ posInicial = 0
 posFinal = 0
 tabSimb = []
 verificacoes = []
+cod3Ende = []
 
 def Z(ch, pos):
     if ch == "var":
@@ -13,6 +14,7 @@ def Z(ch, pos):
         print("Cadeia sintaticamente correta.")
     else:
         print("Erro, esperado var e encontrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 def I(ch, pos):
     if ch == "var":
@@ -21,6 +23,7 @@ def I(ch, pos):
         return (ch, pos)
     else:
         print("Erro, esperado var e encontrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 def D(ch, pos):
     if isIdent(ch):
@@ -32,10 +35,12 @@ def D(ch, pos):
             return (ch, pos)
         else:
             print("Erro, esperado : e encontrado %s no %dº token" %(ch, pos+1))
+            exit()
     elif ch == "if":
         return (ch, pos)
     else:
         print("Erro, esperado identificador ou if e encontrado %s no %dº token" % (ch, pos + 1))
+        exit()
 
 def L(ch, pos):
     if isIdent(ch):
@@ -45,6 +50,7 @@ def L(ch, pos):
         return(ch, pos)
     else:
         print("Erro, esperado identificador e encontrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 def X(ch, pos):
     if ch == ",":
@@ -55,6 +61,7 @@ def X(ch, pos):
         return (ch, pos)   #Como fazer elemento neutro????
     else:
         print("Erro, esperado , ou : e encontrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 def K(ch, pos):
     if ch == "integer":
@@ -67,18 +74,20 @@ def K(ch, pos):
         return (ch, pos)
     else:
         print("Erro, esperado integer ou real e econtrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 def O(ch, pos):
     if ch == ";":
         ch, pos = proxsimb(ch, pos)
         ch, pos = D(ch, pos)
         return (ch, pos)
-    elif ch == "id":
+    elif isIdent(ch):
         return (ch, pos)
     elif ch == "if":
         return (ch, pos)
     else:
-        print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
+        print("Erro, esperado ; ou identificador ou if e econtrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 def S(ch, pos):
     if isIdent(ch):
@@ -90,6 +99,7 @@ def S(ch, pos):
             return (ch, pos)
         else:
             print("Erro, esperado := e econtrado %s no %dº token" %(ch, pos+1))
+            exit()
     elif ch == "if":
         ch, pos = proxsimb(ch, pos)
         ch, pos = E(ch, pos)
@@ -99,8 +109,10 @@ def S(ch, pos):
             return (ch, pos)
         else:
             print("Erro, esperado then e econtrado %s no %dº token" %(ch, pos+1))
+            exit()
     else:
-        print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
+        print("Erro, esperado identificador ou if e econtrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 def E(ch, pos):
     if isIdent(ch):
@@ -109,6 +121,7 @@ def E(ch, pos):
         return (ch, pos)
     else:
         print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 def R(ch, pos):
     if ch == "+":
@@ -128,7 +141,8 @@ def R(ch, pos):
         verificacoes = []
         return (ch, pos)
     else:
-        print("Erro, esperado + e econtrado %s no %dº token" %(ch, pos+1))
+        print("Erro, esperado + ou then e econtrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 
 def T(ch, pos):
@@ -138,6 +152,7 @@ def T(ch, pos):
         return (ch, pos)
     else:
         print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
+        exit()
 
 
 def proxsimb(ch, pos):
@@ -157,6 +172,10 @@ def isIdent(ch):
 
 def addTabSimb(ch):
     global posFinal, tabSimb
+    for i in range(0, len(tabSimb)):
+        if tabSimb[i]['Cadeia'] == ch:
+            print('Cadeia ' + ch + " ja existe na tabela de simbolos.")
+            exit()
     posFinal = posFinal + 1
     conteudo = {'Cadeia': ch, 'Token': 'id', 'Categoria': 'var', 'Tipo': 'null'}
     tabSimb.append(conteudo)
@@ -166,9 +185,6 @@ def addTipo(ch, tipo):
     for i in range(posInicial, posFinal):
         tabSimb[i]['Tipo'] = tipo
     posInicial = posFinal
-
-def buscaTabSimb(ch):
-    a = 1
 
 def addListaVerificacao(ch):
     global verificacoes, tabSimb
