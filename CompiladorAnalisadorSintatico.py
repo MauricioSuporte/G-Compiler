@@ -91,6 +91,9 @@ def O(ch, pos):
 
 def S(ch, pos):
     if isIdent(ch):
+        if not existe(ch):
+            print("Identificador %s na posicao %sº nao declarado" %(ch, str(pos)))
+            exit()
         addListaVerificacao(ch)
         ch, pos = proxsimb(ch, pos)
         if ch == ":=":
@@ -147,6 +150,9 @@ def R(ch, pos):
 
 def T(ch, pos):
     if isIdent(ch):
+        if not existe(ch):
+            print("Identificador %s na posicao %sº nao declarado" %(ch, str(pos)))
+            exit()
         addListaVerificacao(ch)
         ch, pos = proxsimb(ch, pos)
         return (ch, pos)
@@ -201,7 +207,17 @@ def verificaTipo(verificacoes):
     verificacoes = []
     return True
 
+def existe(ch):
+    global tabSimb
+    for i in range(len(tabSimb)):
+        if tabSimb[i]['Cadeia'] == ch:
+            return True
+    return False
 
 #Main
 Z(tokens[0], 0)
 arquivo.close()
+
+print("\n=-=-=-=-=-=-=-=-=-=-=-=-=TABELA DE SIMBOLOS=-=-=-=-=-=-=-=-=-=-=-=-=")
+for i in range(len(tabSimb)):
+    print(tabSimb[i])
