@@ -1,6 +1,10 @@
 arquivo = open("entradaSintatico.txt", "r")
 tokens = arquivo.read()
 tokens = tokens.split(" ")
+posInicial = 0
+posFinal = 0
+tabSimb = []
+verificacoes = []
 
 def Z(ch, pos):
     if ch == "var":
@@ -35,6 +39,7 @@ def D(ch, pos):
 
 def L(ch, pos):
     if isIdent(ch):
+        addTabSimb(ch)
         ch, pos = proxsimb(ch, pos)
         ch, pos = X(ch, pos)
         return(ch, pos)
@@ -53,9 +58,11 @@ def X(ch, pos):
 
 def K(ch, pos):
     if ch == "integer":
+        addTipo(ch, ch)
         ch, pos = proxsimb(ch, pos)
         return (ch, pos)
     elif ch == "real":
+        addTipo(ch, ch)
         ch, pos = ch, pos = proxsimb(ch, pos)
         return (ch, pos)
     else:
@@ -75,6 +82,7 @@ def O(ch, pos):
 
 def S(ch, pos):
     if isIdent(ch):
+        addListaVerificacao(ch)
         ch, pos = proxsimb(ch, pos)
         if ch == ":=":
             ch, pos = proxsimb(ch, pos)
@@ -109,8 +117,15 @@ def R(ch, pos):
         ch, pos = R(ch, pos)
         return (ch, pos)
     elif ch == "then":
+        global verificacoes
+        if (not verificaTipo(verificacoes)):
+            exit()
+        verificacoes = []
         return (ch, pos)
     elif ch == "#":
+        if (not verificaTipo(verificacoes)):
+            exit()
+        verificacoes = []
         return (ch, pos)
     else:
         print("Erro, esperado + e econtrado %s no %dº token" %(ch, pos+1))
@@ -118,6 +133,7 @@ def R(ch, pos):
 
 def T(ch, pos):
     if isIdent(ch):
+        addListaVerificacao(ch)
         ch, pos = proxsimb(ch, pos)
         return (ch, pos)
     else:
@@ -138,6 +154,36 @@ def isIdent(ch):
     else:
         resultado = False
     return resultado
+
+def addTabSimb(ch):
+    global posFinal, tabSimb
+    posFinal = posFinal + 1
+    conteudo = {'Cadeia': ch, 'Token': 'id', 'Categoria': 'var', 'Tipo': 'null'}
+    tabSimb.append(conteudo)
+
+def addTipo(ch, tipo):
+    global posInicial, posFinal, tabSimb
+    for i in range(posInicial, posFinal):
+        tabSimb[i]['Tipo'] = tipo
+    posInicial = posFinal
+
+def buscaTabSimb(ch):
+    a = 1
+
+def addListaVerificacao(ch):
+    global verificacoes, tabSimb
+    for i in range(len(tabSimb)):
+        if tabSimb[i]['Cadeia'] == ch:
+            verificacoes.append(tabSimb[i]['Tipo'])
+
+def verificaTipo(verificacoes):
+    tipo = verificacoes[0]
+    for i in verificacoes:
+        if i != tipo:
+            print("Impossivel operar real com inteiro")
+            return False
+    verificacoes = []
+    return True
 
 
 #Main
