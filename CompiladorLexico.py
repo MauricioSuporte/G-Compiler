@@ -27,8 +27,7 @@ for linha in arquivo:
             j = i + 1
             temp = linha[i]
             while (j < tam):
-                if ((linha[j] >= "a" and linha[j] <= "z") or (linha[j] >= "A" and linha[j] <= "Z")
-                        or (linha[j] >= "1" and linha[j] <= "9")):
+                if ((linha[j] >= "a" and linha[j] <= "z") or (linha[j] >= "A" and linha[j] <= "Z")):
                     temp = temp + linha[j]
                     j = j + 1
                 else:
