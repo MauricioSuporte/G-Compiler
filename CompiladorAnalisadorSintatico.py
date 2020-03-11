@@ -3,9 +3,10 @@ tokens = arquivo.read()
 tokens = tokens.split(" ")
 posInicial = 0
 posFinal = 0
+atual = 0
 tabSimb = []
 verificacoes = []
-cod3Ende = []
+cod3Ende = list()
 
 def Z(ch, pos):
     if ch == "var":
@@ -58,7 +59,7 @@ def X(ch, pos):
         ch, pos = L(ch, pos)
         return(ch, pos)
     elif ch == ":":
-        return (ch, pos)   #Como fazer elemento neutro????
+        return (ch, pos)
     else:
         print("Erro, esperado , ou : e encontrado %s no %dº token" %(ch, pos+1))
         exit()
@@ -118,44 +119,51 @@ def S(ch, pos):
         exit()
 
 def E(ch, pos):
+    REsq = TDir = EDir = RDir = ''
     if isIdent(ch):
-        ch, pos = T(ch, pos)
-        ch, pos = R(ch, pos)
+        ch, pos, REsq = T(ch, pos)
+        ch, pos, EDir = R(ch, pos, REsq)
         return (ch, pos)
     else:
         print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
         exit()
 
-def R(ch, pos):
+def R(ch, pos, REsq):
+    R1Esq = TDir = RDir = R1Dir = ''
     if ch == "+":
         ch, pos = proxsimb(ch, pos)
-        ch, pos = T(ch, pos)
-        ch, pos = R(ch, pos)
+        ch, pos, R1Esq = T(ch, pos)
+        ch, pos = R(ch, pos, R1Esq)
         return (ch, pos)
     elif ch == "then":
         global verificacoes
         if (not verificaTipo(verificacoes)):
             exit()
         verificacoes = []
-        return (ch, pos)
+        RDir = REsq
+        return (ch, pos, RDir)
     elif ch == "#":
         if (not verificaTipo(verificacoes)):
             exit()
         verificacoes = []
-        return (ch, pos)
+        RDir = REsq
+        return (ch, pos, RDir)
     else:
         print("Erro, esperado + ou then e econtrado %s no %dº token" %(ch, pos+1))
         exit()
 
 
 def T(ch, pos):
+    TDir = TEsq = ''
     if isIdent(ch):
         if not existe(ch):
             print("Identificador %s na posicao %sº nao declarado" %(ch, str(pos)))
             exit()
         addListaVerificacao(ch)
+        addCod(ch)
+        TDir = ch
         ch, pos = proxsimb(ch, pos)
-        return (ch, pos)
+        return (ch, pos, TDir)
     else:
         print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
         exit()
@@ -213,6 +221,42 @@ def existe(ch):
         if tabSimb[i]['Cadeia'] == ch:
             return True
     return False
+
+def addCod(ch):
+    global tabSimb, cod3Ende, atual
+    dados = list()
+    for i in range(len(tabSimb)):
+        if tabSimb[i]['Cadeia'] == ch:
+            dados.append(ch)
+    cod3Ende.append(dados)
+
+def somaIds(ch):
+    global tabSimb, cod3Ende, atual
+    temp = []
+    tipo = ""
+    temTemp = True
+    ultimo = len(tabSimb)
+    for i in range(len(tabSimb)):
+        if tabSimb[i]['Cadeia'] == ch:
+            tipo = tabSimb[i]['Tipo']
+    ultimo = tabSimb[ultimo-1]['Cadeia']
+    if len(tabSimb) > 1:
+        if ultimo[0] == 't':
+            ultimo = ultimo.replace('t', '')
+            ultimo = int(ultimo) + 1
+            geraTemp('t' + str(ultimo, tipo))
+        else:
+            temTemp = False
+    else:
+        temTemp = False
+    if not temTemp:
+        geraTemp('t1', tipo)
+    print(ultimo)
+
+def geraTemp(ch, tipo):
+    global tabSimb
+    conteudo = {'Cadeia': ch, 'Token': 'id', 'Categoria': 'var', 'Tipo': tipo}
+    tabSimb.append(conteudo)
 
 #Main
 Z(tokens[0], 0)
