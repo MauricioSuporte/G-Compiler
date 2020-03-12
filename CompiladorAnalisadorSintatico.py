@@ -12,7 +12,7 @@ linhaCod = 1
 def Z(ch, pos):
     if ch == "var":
         ch, pos = I(ch, pos)
-        ch, pos = S(ch, pos, '')
+        ch, pos = S(ch, pos)
         print("Cadeia sintaticamente correta.")
     else:
         print("Erro, esperado var e encontrado %s no %dº token" %(ch, pos+1))
@@ -91,7 +91,7 @@ def O(ch, pos):
         print("Erro, esperado ; ou identificador ou if e econtrado %s no %dº token" %(ch, pos+1))
         exit()
 
-def S(ch, pos, SEsq):
+def S(ch, pos):
     global cod3End, linhaCod
     if isIdent(ch):
         if not existe(ch):
@@ -117,7 +117,7 @@ def S(ch, pos, SEsq):
             S1Quad = linhaCod - 1
             linhaCod = linhaCod + 1
             ch, pos = proxsimb(ch, pos)
-            ch, pos = S(ch, pos, EDir)
+            ch, pos = S(ch, pos)
             linha = "%d: [JF %s %s %s]" % (S1Quad + 1, EDir, linhaCod, "-")
             cod3End.insert(S1Quad, linha)
             linhaCod = linhaCod + 1
