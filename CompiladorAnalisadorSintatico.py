@@ -3,15 +3,16 @@ tokens = arquivo.read()
 tokens = tokens.split(" ")
 posInicial = 0
 posFinal = 0
-atual = 0
+tempAtual = 0
 tabSimb = []
 verificacoes = []
-cod3Ende = list()
+cod3End = []
+linhaCod = 1
 
 def Z(ch, pos):
     if ch == "var":
         ch, pos = I(ch, pos)
-        ch, pos = S(ch, pos)
+        ch, pos = S(ch, pos, '')
         print("Cadeia sintaticamente correta.")
     else:
         print("Erro, esperado var e encontrado %s no %dº token" %(ch, pos+1))
@@ -90,26 +91,36 @@ def O(ch, pos):
         print("Erro, esperado ; ou identificador ou if e econtrado %s no %dº token" %(ch, pos+1))
         exit()
 
-def S(ch, pos):
+def S(ch, pos, SEsq):
+    global cod3End, linhaCod
     if isIdent(ch):
         if not existe(ch):
             print("Identificador %s na posicao %sº nao declarado" %(ch, str(pos)))
             exit()
         addListaVerificacao(ch)
+        EEsq = ch
         ch, pos = proxsimb(ch, pos)
         if ch == ":=":
             ch, pos = proxsimb(ch, pos)
-            ch, pos = E(ch, pos)
+            ch, pos, EDir = E(ch, pos)
+            linha = "%d: [:= %s %s %s]" % (linhaCod, EEsq, EDir, "-")
+            cod3End.insert(linhaCod, linha)
+            linhaCod = linhaCod + 1
             return (ch, pos)
         else:
             print("Erro, esperado := e econtrado %s no %dº token" %(ch, pos+1))
             exit()
     elif ch == "if":
         ch, pos = proxsimb(ch, pos)
-        ch, pos = E(ch, pos)
+        ch, pos, EDir = E(ch, pos)
         if ch == "then":
+            S1Quad = linhaCod - 1
+            linhaCod = linhaCod + 1
             ch, pos = proxsimb(ch, pos)
-            ch, pos = S(ch, pos)
+            ch, pos = S(ch, pos, EDir)
+            linha = "%d: [JF %s %s %s]" % (S1Quad + 1, EDir, linhaCod, "-")
+            cod3End.insert(S1Quad, linha)
+            linhaCod = linhaCod + 1
             return (ch, pos)
         else:
             print("Erro, esperado then e econtrado %s no %dº token" %(ch, pos+1))
@@ -119,48 +130,47 @@ def S(ch, pos):
         exit()
 
 def E(ch, pos):
-    REsq = TDir = EDir = RDir = ''
     if isIdent(ch):
         ch, pos, REsq = T(ch, pos)
         ch, pos, EDir = R(ch, pos, REsq)
-        return (ch, pos)
+        return (ch, pos, EDir)
     else:
         print("Erro, esperado identificador e econtrado %s no %dº token" %(ch, pos+1))
         exit()
 
 def R(ch, pos, REsq):
-    R1Esq = TDir = RDir = R1Dir = ''
     if ch == "+":
         ch, pos = proxsimb(ch, pos)
         ch, pos, R1Esq = T(ch, pos)
-        ch, pos = R(ch, pos, R1Esq)
-        return (ch, pos)
+        ch, pos, R1Dir = R(ch, pos, R1Esq)
+        RDir = geraTemp(REsq)
+        global cod3End, linhaCod
+        linha = "%d: [+ %s %s %s]" %(linhaCod, REsq, R1Dir, RDir)
+        cod3End.insert(linhaCod, linha)
+        linhaCod = linhaCod + 1
+        return (ch, pos, RDir)
     elif ch == "then":
         global verificacoes
         if (not verificaTipo(verificacoes)):
             exit()
         verificacoes = []
-        RDir = REsq
-        return (ch, pos, RDir)
+        return (ch, pos, REsq)
     elif ch == "#":
         if (not verificaTipo(verificacoes)):
             exit()
         verificacoes = []
-        RDir = REsq
-        return (ch, pos, RDir)
+        return (ch, pos, REsq)
     else:
         print("Erro, esperado + ou then e econtrado %s no %dº token" %(ch, pos+1))
         exit()
 
 
 def T(ch, pos):
-    TDir = TEsq = ''
     if isIdent(ch):
         if not existe(ch):
             print("Identificador %s na posicao %sº nao declarado" %(ch, str(pos)))
             exit()
         addListaVerificacao(ch)
-        addCod(ch)
         TDir = ch
         ch, pos = proxsimb(ch, pos)
         return (ch, pos, TDir)
@@ -222,41 +232,15 @@ def existe(ch):
             return True
     return False
 
-def addCod(ch):
-    global tabSimb, cod3Ende, atual
-    dados = list()
+def geraTemp(ch):
+    global tabSimb, tempAtual
     for i in range(len(tabSimb)):
-        if tabSimb[i]['Cadeia'] == ch:
-            dados.append(ch)
-    cod3Ende.append(dados)
-
-def somaIds(ch):
-    global tabSimb, cod3Ende, atual
-    temp = []
-    tipo = ""
-    temTemp = True
-    ultimo = len(tabSimb)
-    for i in range(len(tabSimb)):
-        if tabSimb[i]['Cadeia'] == ch:
+        if ch == tabSimb[i]['Cadeia']:
             tipo = tabSimb[i]['Tipo']
-    ultimo = tabSimb[ultimo-1]['Cadeia']
-    if len(tabSimb) > 1:
-        if ultimo[0] == 't':
-            ultimo = ultimo.replace('t', '')
-            ultimo = int(ultimo) + 1
-            geraTemp('t' + str(ultimo, tipo))
-        else:
-            temTemp = False
-    else:
-        temTemp = False
-    if not temTemp:
-        geraTemp('t1', tipo)
-    print(ultimo)
-
-def geraTemp(ch, tipo):
-    global tabSimb
-    conteudo = {'Cadeia': ch, 'Token': 'id', 'Categoria': 'var', 'Tipo': tipo}
+    tempAtual = tempAtual + 1
+    conteudo = {'Cadeia': 't' + str(tempAtual), 'Token': 'id', 'Categoria': 'var', 'Tipo': tipo}
     tabSimb.append(conteudo)
+    return 't' + str(tempAtual)
 
 #Main
 Z(tokens[0], 0)
@@ -265,3 +249,8 @@ arquivo.close()
 print("\n=-=-=-=-=-=-=-=-=-=-=-=-=TABELA DE SIMBOLOS=-=-=-=-=-=-=-=-=-=-=-=-=")
 for i in range(len(tabSimb)):
     print(tabSimb[i])
+
+print("\n\n=-=-=-=-=-=-=-=-=-=-=-=CODIGO INTERMEDIARIO=-=-=-=-=-=-=-=-=-=-=-=")
+for i in cod3End:
+    print(f'{i}')
+print("%d: [...]" % (linhaCod - 1))
