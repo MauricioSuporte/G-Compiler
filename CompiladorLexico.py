@@ -45,6 +45,7 @@ for linha in arquivo:
             continue
         else:
             print("Erro lexico, caracter " + linha[i] + " nao conhecido")
+            exit()
             i = i + 1
 tokens[0] = tokens[0].replace(" ", "")
 print(tokens)
