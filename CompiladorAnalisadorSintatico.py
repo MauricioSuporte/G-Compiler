@@ -72,7 +72,7 @@ def K(ch, pos):
         return (ch, pos)
     elif ch == "real":
         addTipo(ch, ch)
-        ch, pos = ch, pos = proxsimb(ch, pos)
+        ch, pos = proxsimb(ch, pos)
         return (ch, pos)
     else:
         print("Erro, esperado integer ou real e econtrado %s no %dº token" %(ch, pos+1))
@@ -232,6 +232,14 @@ def existe(ch):
             return True
     return False
 
+def qntJF():
+    global cod3End
+    JFs = 0
+    for i in range(len(cod3End)):
+        if cod3End[i][4] == 'J':
+            JFs = JFs + 1
+    return JFs
+
 def geraTemp(ch):
     global tabSimb, tempAtual
     for i in range(len(tabSimb)):
@@ -251,6 +259,7 @@ for i in range(len(tabSimb)):
     print(tabSimb[i])
 
 print("\n\n=-=-=-=-=-=-=-=-=-=-=-=CODIGO INTERMEDIARIO=-=-=-=-=-=-=-=-=-=-=-=")
+cod3End = sorted(cod3End)
 for i in cod3End:
     print(f'{i}')
-print("%d: [...]" % (linhaCod - 1))
+print(str(len(cod3End) + 1) + ": [...]")
