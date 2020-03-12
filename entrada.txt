@@ -1,1 +1,4 @@
-var id, id : integer; id : real ; if id + id then id := id
+var
+ a, b, c: integer;
+ d:real
+if a+b then a:=c
