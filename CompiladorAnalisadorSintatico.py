@@ -118,7 +118,7 @@ def S(ch, pos):
             linhaCod = linhaCod + 1
             ch, pos = proxsimb(ch, pos)
             ch, pos = S(ch, pos)
-            linha = "%d: [JF %s %s %s]" % (S1Quad + 1, EDir, linhaCod, "-")
+            linha = "%d: [JF %s %s %s]" % (S1Quad + 1, EDir, '<T>', "-")
             cod3End.insert(S1Quad, linha)
             linhaCod = linhaCod + 1
             return (ch, pos)
@@ -232,14 +232,6 @@ def existe(ch):
             return True
     return False
 
-def qntJF():
-    global cod3End
-    JFs = 0
-    for i in range(len(cod3End)):
-        if cod3End[i][4] == 'J':
-            JFs = JFs + 1
-    return JFs
-
 def geraTemp(ch):
     global tabSimb, tempAtual
     for i in range(len(tabSimb)):
@@ -258,8 +250,11 @@ print("\n=-=-=-=-=-=-=-=-=-=-=-=-=TABELA DE SIMBOLOS=-=-=-=-=-=-=-=-=-=-=-=-=")
 for i in range(len(tabSimb)):
     print(tabSimb[i])
 
-print("\n\n=-=-=-=-=-=-=-=-=-=-=-=CODIGO INTERMEDIARIO=-=-=-=-=-=-=-=-=-=-=-=")
+print("\n\n=-=CODIGO INTERMEDIARIO=-=")
 cod3End = sorted(cod3End)
+for i in range(len(cod3End)):
+    if cod3End[i][4] == 'J':
+        cod3End[i] = cod3End[i].replace('<T>', str(len(cod3End) + 1))
 for i in cod3End:
     print(f'{i}')
 print(str(len(cod3End) + 1) + ": [...]")
