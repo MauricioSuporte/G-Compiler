@@ -1,8 +1,11 @@
 # G-Compiler
 
 G = ( {Z,I,D,L,X,K,O,S,E,R,T}, {var, : , id, , , integer, real, ; , :=, if, then,+}, P, Z)
+
 P:
+
 Z → I S
+
 I → var D
  D → L : K O
 L → id X
@@ -18,5 +21,6 @@ E → T R
 R → + T R
 R → ε
 T → id
+
 
 1º Rodar arquivo léxico, depois Sintático.
